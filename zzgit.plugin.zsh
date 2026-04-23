@@ -5,7 +5,7 @@
 # Repository: https://github.com/rgthomas47/zzgit
 # License: MIT (see LICENSE)
 
-typeset -g ZZGIT_VERSION='0.1.0'
+typeset -g ZZGIT_VERSION='0.1.1'
 
 # ----------------------------------------------------------------------------
 # Help strings
@@ -73,9 +73,12 @@ zzgit() {
         return 1
     fi
 
-    # Branch + protected-branch check
+    # Branch + protected-branch check. symbolic-ref works on an empty
+    # repo (unborn branch); fall back to rev-parse for detached HEAD.
     local branch
-    branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    branch=$(git symbolic-ref --short HEAD 2>/dev/null) \
+      || branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) \
+      || branch='HEAD'
     local protected_branches="${ZZGIT_PROTECTED_BRANCHES:-main master}"
     local is_protected=0 b
     for b in ${=protected_branches}; do
@@ -313,11 +316,14 @@ _zzgit_secret_scan() {
     # gitleaks: prefer the newer `git --staged` subcommand, fall back to
     # the older `protect --staged` if present. Reads .gitleaks.toml and
     # .gitleaksignore from the repo root automatically.
+    # `-v` prints the finding details (file, line, rule ID, fingerprint)
+    # that the refusal message and the .gitleaksignore workflow both
+    # reference. Without it, gitleaks prints only a count to stderr.
     local -a gl_cmd
     if gitleaks git --help > /dev/null 2>&1; then
-        gl_cmd=(gitleaks git --staged --no-banner)
+        gl_cmd=(gitleaks git --staged --no-banner -v)
     elif gitleaks protect --help > /dev/null 2>&1; then
-        gl_cmd=(gitleaks protect --staged --no-banner)
+        gl_cmd=(gitleaks protect --staged --no-banner -v)
     else
         echo 'gitleaks present but neither "git" nor "protect" subcommand works.' >&2
         echo 'Check gitleaks version; aborting.' >&2
@@ -372,7 +378,7 @@ _zzgit_secret_scan() {
         echo '---'
         echo "timestamp: $(date '+%Y-%m-%d %H:%M:%S %Z')"
         echo "user: ${USER:-unknown}"
-        echo "branch: $(git rev-parse --abbrev-ref HEAD)"
+        echo "branch: $(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --abbrev-ref HEAD)"
         echo 'staged_files:'
         git diff --cached --name-only | sed 's/^/  - /'
         echo "reason: $reason"
