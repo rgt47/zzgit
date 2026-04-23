@@ -31,7 +31,7 @@ brew install fzf gitleaks
 ### oh-my-zsh
 
 ```zsh
-git clone https://github.com/rgthomas47/zzgit \
+git clone https://github.com/rgt47/zzgit \
   ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zzgit
 # then add `zzgit` to the plugins=(...) list in ~/.zshrc
 ```
@@ -39,19 +39,19 @@ git clone https://github.com/rgthomas47/zzgit \
 ### zinit
 
 ```zsh
-zinit load rgthomas47/zzgit
+zinit load rgt47/zzgit
 ```
 
 ### antidote
 
 ```zsh
-antidote bundle rgthomas47/zzgit
+antidote bundle rgt47/zzgit
 ```
 
 ### Manual
 
 ```zsh
-git clone https://github.com/rgthomas47/zzgit ~/.zsh/plugins/zzgit
+git clone https://github.com/rgt47/zzgit ~/.zsh/plugins/zzgit
 # in ~/.zshrc:
 source ~/.zsh/plugins/zzgit/zzgit.plugin.zsh
 ```

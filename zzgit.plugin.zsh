@@ -2,7 +2,7 @@
 # zzgit - interactive git add/commit/push with content-based secret
 # scanning, a Conventional Commits wizard, and a protected-branch guard.
 #
-# Repository: https://github.com/rgthomas47/zzgit
+# Repository: https://github.com/rgt47/zzgit
 # License: MIT (see LICENSE)
 
 typeset -g ZZGIT_VERSION='0.1.1'
