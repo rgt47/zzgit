@@ -1,0 +1,62 @@
+{
+  "version": "1.0",
+  "created": "2026-05-06T10:48:06-07:00",
+  "directories": [
+    ".github",
+    ".github/workflows",
+    "R",
+    "analysis",
+    "analysis/data",
+    "analysis/data/derived_data",
+    "analysis/data/raw_data",
+    "analysis/figures",
+    "analysis/report",
+    "analysis/scripts",
+    "analysis/tables",
+    "docs",
+    "inst",
+    "inst/tinytest",
+    "man",
+    "tests",
+    "vignettes"
+  ],
+  "files": [
+    ".Rbuildignore",
+    ".Rprofile",
+    ".gitignore",
+    "Dockerfile",
+    "LICENSE",
+    "NAMESPACE",
+    "inst/tinytest/test-basic.R",
+    "renv.lock",
+    "tests/tinytest.R"
+  ],
+  "template_files": [
+    {
+      "template": "workflows/r-package.yml",
+      "destination": ".github/workflows/r-package.yml"
+    },
+    {
+      "template": "unified/.github/workflows/render-report.yml",
+      "destination": ".github/workflows/render-report.yml"
+    },
+    {
+      "template": "DESCRIPTION",
+      "destination": "DESCRIPTION"
+    },
+    {
+      "template": "Makefile",
+      "destination": "Makefile"
+    },
+    {
+      "template": "data_README.md",
+      "destination": "analysis/data/README.md"
+    },
+    {
+      "template": "ZZCOLLAB_USER_GUIDE.md",
+      "destination": "docs/ZZCOLLAB_USER_GUIDE.md"
+    }
+  ],
+  "symlinks": [],
+  "docker_image": null
+}
