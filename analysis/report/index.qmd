@@ -1,6 +1,5 @@
 ---
 title: 'zzgit: An interactive staging, secret-scanning, and commit wizard for zsh'
-subtitle: 'A zsh plugin that replaces `git add . && git commit -am ... && git push` with a deliberate flow, a content-based secret scan of the staged diff, and independent pre-commit and pre-push confirmations.'
 author: "Ronald 'Ryy' G. Thomas"
 date: '2026-04-22'
 categories: [git, shell]
