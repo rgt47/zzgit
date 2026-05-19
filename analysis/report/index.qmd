@@ -6,7 +6,7 @@ categories: [git, shell]
 description: 'A reproducible configuration for zzgit, a zsh plugin that guides the three-step local git workflow (stage, commit, push) through an interactive wizard. Stages only user-selected files, scans the staged diff for credentials via gitleaks, assembles a Conventional Commits message, and gates the push behind a separate confirmation. Includes a protected-branch guard and an audited override path for confirmed false positives.'
 image: 'media/images/zzgit-hero.jpg'
 document-type: 'blog'
-draft: true
+draft: false
 execute:
   echo: true
   warning: false
@@ -27,7 +27,17 @@ I did not really appreciate how much trust I was placing in `git add .` until I 
 
 The reflex form of the local git workflow, `git add . && git commit -am '...' && git push`, has three well-documented failure modes, each of which contributed to the incident above. It stages every changed or untracked file in the working tree regardless of whether the user intends to publish it. It accepts a commit subject that is typically filename-derived or descriptive of the mechanical action rather than of the user's intent. And it treats the push as an implicit continuation of the commit rather than as a separate decision. Each failure mode is individually minor; in combination they are the proximate cause of most accidentally-committed credentials, of the genre of commit messages that read 'update', and of the specific category of incidents in which a commit is pushed to `main` that the author intended to push to a feature branch.
 
-This post documents a zsh plugin, `zzgit`, that replaces this reflex with a deliberate interactive flow. The plugin stages only files that the user explicitly selects, scans the resulting staged diff for credentials using `gitleaks` (a content-based scanner, not a filename heuristic), assembles a Conventional Commits message through a short wizard, and treats the push as a separately-confirmed action. When the scanner flags a finding, the default behaviour is to refuse the commit and print three remediation paths; the override is guarded by a session-scoped environment variable, requires a typed reason, and is logged. The remainder of the post covers the motivations, the configuration, the design rationale, the limitations, and the set of failure modes that remain.
+We document a zsh plugin, `zzgit`, that replaces this reflex with a
+deliberate interactive flow. The plugin stages only files that the
+user explicitly selects, scans the resulting staged diff for
+credentials using `gitleaks` (a content-based scanner, not a filename
+heuristic), assembles a Conventional Commits message through a short
+wizard, and treats the push as a separately-confirmed action. When
+the scanner flags a finding, the default behaviour is to refuse the
+commit and print three remediation paths; the override is guarded by
+a session-scoped environment variable, requires a typed reason, and
+is logged. We cover the motivations, the configuration, the design
+rationale, the limitations, and the set of failure modes that remain.
 
 ## Motivations
 
@@ -373,12 +383,16 @@ The plugin documented here replaces the reflex with an interactive flow that add
 
 The design intentionally declines several tempting features. It does not refuse pushes to protected branches outright; it prompts more strongly, on the theory that only the remote can authoritatively enforce branch protection. It does not silently allowlist findings that the user overrides; each override is logged with a typed reason. It does not scan the working tree ambiently; its scope is the commit that is about to be made. These choices are subject to revision and are motivated in the Design Decisions section above.
 
-### Main takeaways
-
-- **Secret scanning belongs at the staging step, not at push time or in history-scan-only mode.** The latest cheap intervention is before `git commit` is issued.
-- **Filename heuristics are a fallback, not a primary defence.** Content-based scanning is the only rule that survives contact with real-world credential placement.
-- **Confirmation prompts after safety violations train the wrong behaviour.** Default to refusal; gate the override behind friction calibrated to the risk.
-- **The three local-git steps are three decisions.** Preserve them.
+In conclusion, four points merit emphasis. First, secret scanning
+belongs at the staging step, not at push time or in history-scan-only
+mode: the latest cheap intervention point is before `git commit` is
+issued. Second, filename heuristics are a fallback, not a primary
+defence; content-based scanning is the only rule that survives contact
+with real-world credential placement. Third, confirmation prompts
+after safety violations train the wrong behaviour: the default should
+be refusal, with the override gated behind friction calibrated to the
+risk. Fourth, the three local-git steps are three distinct decisions
+and should be preserved as such.
 
 # See Also
 
